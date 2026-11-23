@@ -98,7 +98,7 @@ public:
     void testAccess() {
         cout << " [Circle] из потомка вижу protected name=" << name << "\n";
     }
-};   // <-- ЭТОЙ СТРОКИ У ТЕБЯ НЕ БЫЛО
+};
 
 class Parent {
 public:
@@ -182,5 +182,26 @@ int main() {
         c2.describe();
         cout << "конец блока\n";
     }
+    cout << "\ 7. Предок с ctor/dtor, потомок без \n";
+    {
+        Parent par;
+        ChildEmpty ch;
+        ch.hello();
+    }
+
+    cout << "\n 8. Указатель на базовый класс, внутри потомок\n";
+    Base* bp = new Derived();
+    bp->onlyBase();                                // можно
+    // bp->onlyDerived();                          // ОШИБКА: через Base* виден только Base
+    static_cast<Derived*>(bp)->onlyDerived();      // можно, если привести тип
+    delete bp;
+
+    cout << "\n9. Срезка (slicing) \n";
+    {
+        Base sliced = Derived();
+        cout << "sliced живёт, это уже просто Base \n";
+    }
+
+    cout << "\nКОНЕЦ main\n";
     return 0;
 }
