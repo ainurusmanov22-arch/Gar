@@ -70,6 +70,32 @@ public:
     }
     void shift(int dx, int dy) { center.move(dx, dy); }
 };
+class Circle : public Shape {
+private:
+    int radius;
+    Style* style;
+public:
+    Circle() : Shape(), radius(1), style(new Style()) {
+        cout << " [Circle] конструктор по умолчанию\n";
+    }
+    Circle(string name, int cx, int cy, int r, string color)
+        : Shape(name, cx, cy), radius(r), style(new Style(color)) {
+        cout << " [Circle] конструктор с параметрами r = " << radius << "\n";
+    }
+    ~Circle() {
+        cout << " [Circle] деструктор " << name << "\n";
+        delete style;
+    }
+    void describe() const {
+        Shape::describe();
+        cout << " [Circle] describe: радиус " << radius
+            << ", цвет " << style->color << "\n";
+    }
+    void setColor(string c) { style->color = c; }
+    void testAccess() {
+        cout << " [Circle] из потомка вижу protected name=" << name << "\n";
+    }
+};
 int main() {
 #ifdef _WIN32
     SetConsoleOutputCP(65001);
@@ -112,6 +138,14 @@ int main() {
         s.describe();
         s.shift(1, 1);
         s.describe();
+    }
+    cout << "\n5.Потомок: порядок конструкторов/деструкторов\n";
+    {
+        Circle ci("circle1", 5, 5, 10, "red");
+        ci.describe();
+        ci.Shape::describe(); //явный вызок версии предка
+        ci.testAccess();
+        cout << "конец блока, смотри порядок деструкторов\n";
     }
     return 0;
 }
