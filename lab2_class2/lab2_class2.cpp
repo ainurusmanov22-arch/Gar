@@ -28,7 +28,19 @@ public:
     ~Point() {
         cout << " [Point] деструктор (" << x << "," << y << ")\n";
     }
+    // реализация прямо в классе
+    void move(int dx, int dy) {
+        x += dx; y += dy;
+        cout << " [Point] move -> (" << x << "," << y << ")\n";
+    }
+    // только обьявление 
+    void print() const;
+    int getSecret() const { return secret; }
 };
+void Point::print() const {
+    cout << " [Point] print: (" << x << "," << y << ")\n";
+}
+
 int main() {
 #ifdef _WIN32
     SetConsoleOutputCP(65001);
@@ -38,6 +50,11 @@ int main() {
         Point p1;
         Point p2(3, 4);
         Point p3(p2);
+        p2.move(1, 1);
+        p2.print();
+        cout << " public x = " << p2.x << ", private через метод = " << p2.getSecret() << "\n";
+        p2.secret = 5; // ошибка: private
+        // p2.id = 5; // ошибка: protected
         cout << " конец блока\n";
     }
     return 0;
