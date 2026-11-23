@@ -32,7 +32,7 @@ public:
         x += dx; y += dy;
         cout << " [Point] move -> (" << x << "," << y << ")\n";
     }
-    // только обьявление 
+    // только объявление
     void print() const;
     int getSecret() const { return secret; }
 };
@@ -82,6 +82,9 @@ public:
         : Shape(name, cx, cy), radius(r), style(new Style(color)) {
         cout << " [Circle] конструктор с параметрами r = " << radius << "\n";
     }
+    Circle(const Circle& o) : Shape(o), radius(o.radius), style(new Style(*o.style)) {
+        cout << " [Circle] конструктор копирования\n";
+    }
     ~Circle() {
         cout << " [Circle] деструктор " << name << "\n";
         delete style;
@@ -95,7 +98,29 @@ public:
     void testAccess() {
         cout << " [Circle] из потомка вижу protected name=" << name << "\n";
     }
+};   // <-- ЭТОЙ СТРОКИ У ТЕБЯ НЕ БЫЛО
+
+class Parent {
+public:
+    Parent() { cout << " [Parent] конструктор\n"; }
+    ~Parent() { cout << " [Parent] деструктор\n"; }
+    void hello() { cout << " [Parent] hello\n"; }
 };
+class ChildEmpty : public Parent {};     // своих конструктора и деструктора нет
+
+class Base {
+public:
+    Base() { cout << " [Base] конструктор\n"; }
+    virtual ~Base() { cout << " [Base] деструктор\n"; }
+    void onlyBase() { cout << " [Base] onlyBase\n"; }
+};
+class Derived : public Base {
+public:
+    Derived() { cout << " [Derived] конструктор\n"; }
+    ~Derived() { cout << " [Derived] деструктор\n"; }
+    void onlyDerived() { cout << " [Derived] onlyDerived\n"; }
+};
+
 int main() {
 #ifdef _WIN32
     SetConsoleOutputCP(65001);
@@ -123,14 +148,14 @@ int main() {
     Point c;
     c = a; //присваивание без конструктора
     a.move(100, 100);
-    cout << " после изменение a: a.x=" << a.x << ", b.x=" << b.x << ", c.x=" << c.x
+    cout << " после изменения a: a.x=" << a.x << ", b.x=" << b.x << ", c.x=" << c.x
         << " (копии независимы)\n";
 
     cout << "\n4.Присваивание: указатель в указатель\n";
     Point* p = new Point(7, 7);
-    Point* q = p; // два указателя на Один объект
+    Point* q = p; // два указателя на один объект
     q->move(1, 1);
-    cout << " p->x=" << p->x << ", q ->x=" << q->x << " (один и тот же объект!)\n";
+    cout << " p->x=" << p->x << ", q->x=" << q->x << " (один и тот же объект!)\n";
     delete p;
     cout << "\nтест Shape\n";
     {
@@ -143,9 +168,19 @@ int main() {
     {
         Circle ci("circle1", 5, 5, 10, "red");
         ci.describe();
-        ci.Shape::describe(); //явный вызок версии предка
+        ci.Shape::describe(); //явный вызов версии предка
         ci.testAccess();
         cout << "конец блока, смотри порядок деструкторов\n";
+    }
+    cout << "\n6.Композиция: объект vs указатель\n";
+    {
+        Circle c1("orig", 0, 0, 5, "blue");
+        cout << "копируем круг\n";
+        Circle c2(c1);
+        c2.setColor("green");
+        c1.describe();
+        c2.describe();
+        cout << "конец блока\n";
     }
     return 0;
 }
