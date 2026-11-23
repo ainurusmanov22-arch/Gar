@@ -11,7 +11,6 @@ protected:
     int id;
 public:
     int x, y;
-
     // 1) Конструктор без параметров
     Point() : secret(0), id(0), x(0), y(0) {
         cout << " [Point] конструктор по умолчанию (" << x << "," << y << ")\n";
@@ -53,9 +52,29 @@ int main() {
         p2.move(1, 1);
         p2.print();
         cout << " public x = " << p2.x << ", private через метод = " << p2.getSecret() << "\n";
-        p2.secret = 5; // ошибка: private
+        // p2.secret = 5; // ошибка: private
         // p2.id = 5; // ошибка: protected
         cout << " конец блока\n";
     }
+    cout << "\n2.Динамический объект\n";
+    Point* pp = new Point(10, 20); // объект в куче
+    pp->move(5, 5); // через указатель: стрелка ->
+    pp->print();
+    delete pp; //удаляем вручную
+    cout << "\n3.Присваивание: объект в объект\n";
+    Point a(1, 1);
+    Point b = a; //конструктор копирования
+    Point c;
+    c = a; //присваивание без конструктора
+    a.move(100, 100);
+    cout << " после изменение a: a.x=" << a.x << ", b.x=" << b.x << ", c.x=" << c.x
+        << " (копии независимы)\n";
+
+    cout << "\n4.Присваивание: указатель в указатель\n";
+    Point* p = new Point(7, 7);
+    Point* q = p; // два указателя на Один объект
+    q->move(1, 1);
+    cout << " p->x=" << p->x << ", q ->x=" << q->x << " (один и тот же объект!)\n";
+    delete p;
     return 0;
 }
