@@ -39,7 +39,37 @@ public:
 void Point::print() const {
     cout << " [Point] print: (" << x << "," << y << ")\n";
 }
-
+class Style {
+public:
+    string color;
+    Style() : color("black") { cout << " [Style] конструктор по умолчанию\n"; }
+    Style(string c) : color(c) { cout << " [Style] конструктор с параметром " << color << "\n"; }
+    Style(const Style& o) : color(o.color) { cout << " [Style] копирование " << color << "\n"; }
+    ~Style() { cout << " [Style] деструктор " << color << "\n"; }
+};
+class Shape {
+protected:
+    string name;
+    Point center; //Point внутри Shape
+public:
+    Shape() : name("noname"), center() {
+        cout << " [Shape] конструктор по умолчанию\n";
+    }
+    Shape(string name, int cx, int cy) : name(name), center(cx, cy) {
+        cout << " [Shape] конструктор с параметрами " << name << "\n";
+    }
+    Shape(const Shape& o) : name(o.name), center(o.center) {
+        cout << " [Shape] конструктор копирования " << name << "\n";
+    }
+    ~Shape() {
+        cout << " [Shape] деструктор " << name << "\n";
+    }
+    void describe() const { //без virtual
+        cout << " [Shape] describe: фигура " << name
+            << " в точке (" << center.x << "," << center.y << ")\n";
+    }
+    void shift(int dx, int dy) { center.move(dx, dy); }
+};
 int main() {
 #ifdef _WIN32
     SetConsoleOutputCP(65001);
@@ -76,5 +106,12 @@ int main() {
     q->move(1, 1);
     cout << " p->x=" << p->x << ", q ->x=" << q->x << " (один и тот же объект!)\n";
     delete p;
+    cout << "\nтест Shape\n";
+    {
+        Shape s("sh", 1, 2);
+        s.describe();
+        s.shift(1, 1);
+        s.describe();
+    }
     return 0;
 }
